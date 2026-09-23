@@ -1,0 +1,15 @@
+# Recebe alertas externos (Grafana, Uptime Kuma, GitHub...) em POST /hooks/alerta-webhook.
+description = "Triagem de alertas externos"
+prompt = """
+Chegou um alerta externo (payload abaixo). Identifique o serviço afetado,
+verifique o estado atual dele e diga se é falso positivo ou incidente real.
+"""
+cooldown = "10m"
+
+[trigger]
+type = "webhook"
+token = "troque-este-token"
+
+[claude]
+model = "sonnet"
+permission_mode = "plan"
