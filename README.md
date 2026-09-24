@@ -41,7 +41,7 @@ Requer o `claude` no PATH e autenticado (`claude -p "oi"` precisa funcionar no m
 claude-hooks add disco \
   --command "ssh meu-servidor df -h / | tail -1" --every 5m \
   --when output_matches --pattern "9[0-9]%" --cooldown 2h \
-  --prompt "O disco do mono passou de 90%. Descubra o que ocupa espaço e o que pode ser removido." \
+  --prompt "O disco do servidor passou de 90%. Descubra o que ocupa espaço e o que pode ser removido." \
   --cwd C:/projetos/meu-app --model sonnet --allow "Bash(ssh meu-servidor *)"
 
 # agendada
