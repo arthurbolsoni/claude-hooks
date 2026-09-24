@@ -1,7 +1,7 @@
 # Todo dia útil às 8h o Claude revisa os logs de erro das últimas 24h.
 description = "Revisão diária de erros da API"
 prompt = """
-Leia os logs de erro das últimas 24h dos containers da API no servidor `mono`
+Leia os logs de erro das últimas 24h dos containers da API no servidor `meu-servidor`
 (`docker logs --since 24h <container> 2>&1 | grep -i error`). Agrupe por tipo,
 aponte o que é novo e o que precisa de ação.
 """
@@ -12,7 +12,7 @@ schedule = "0 8 * * MON-FRI"
 
 [claude]
 model = "sonnet"
-allowed_tools = ["Bash(ssh mono *)"]
+allowed_tools = ["Bash(ssh meu-servidor *)"]
 
 [notify]
 command = "type %CLAUDE_HOOKS_RESULT_FILE%"

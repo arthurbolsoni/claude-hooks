@@ -39,10 +39,10 @@ Requer o `claude` no PATH e autenticado (`claude -p "oi"` precisa funcionar no m
 ```sh
 # checagem por comando
 claude-hooks add disco \
-  --command "ssh mono df -h / | tail -1" --every 5m \
+  --command "ssh meu-servidor df -h / | tail -1" --every 5m \
   --when output_matches --pattern "9[0-9]%" --cooldown 2h \
   --prompt "O disco do mono passou de 90%. Descubra o que ocupa espaço e o que pode ser removido." \
-  --cwd C:/Users/arthu/desktop/WMC --model sonnet --allow "Bash(ssh mono *)"
+  --cwd C:/projetos/meu-app --model sonnet --allow "Bash(ssh meu-servidor *)"
 
 # agendada
 claude-hooks add resumo --cron "0 8 * * MON-FRI" --prompt-file prompts/resumo.md
@@ -76,7 +76,7 @@ Chamando um webhook:
 ```sh
 curl -X POST http://127.0.0.1:7878/hooks/alerta \
   -H "Authorization: Bearer segredo" -H "Content-Type: application/json" \
-  -d '{"alert": "CPU 99%", "host": "mono"}'
+  -d '{"alert": "CPU 99%", "host": "meu-servidor"}'
 ```
 
 O token também é aceito em `X-Hook-Token` ou `?token=`. Respostas: `202` iniciado, `409` sessão anterior em execução, `429` em cooldown, `401` token inválido, `404` tarefa inexistente. `GET /tasks` lista as tarefas e `GET /health` responde `ok`.
@@ -86,7 +86,7 @@ O token também é aceito em `X-Hook-Token` ou `?token=`. Respostas: `202` inici
 `~/.claude-hooks/tasks/<nome>.toml`:
 
 ```toml
-description = "Disco do Postgres no mono"
+description = "Disco do Postgres no servidor"
 enabled = true
 prompt = """
 O que o Claude deve analisar quando disparar.
@@ -96,7 +96,7 @@ timeout = "15m"        # tempo máximo da sessão (padrão 20m)
 
 [trigger]
 type = "command"       # cron | command | webhook
-command = "ssh mono df -h / | tail -1"
+command = "ssh meu-servidor df -h / | tail -1"
 interval = "5m"
 when = "output_matches"
 pattern = "9[0-9]%"
@@ -104,10 +104,10 @@ timeout = "60s"        # tempo máximo da checagem (padrão 60s)
 shell = ["bash", "-c"] # padrão: cmd /C no Windows, sh -c nos demais
 
 [claude]
-cwd = "C:/Users/arthu/desktop/WMC"  # CLAUDE.md, skills e .claude/settings.json do projeto valem
+cwd = "C:/projetos/meu-app"  # CLAUDE.md, skills e .claude/settings.json do projeto valem
 model = "sonnet"
 permission_mode = "plan"            # default | acceptEdits | plan | bypassPermissions
-allowed_tools = ["Bash(ssh mono *)", "Read"]
+allowed_tools = ["Bash(ssh meu-servidor *)", "Read"]
 disallowed_tools = []
 add_dirs = []
 append_system_prompt = "..."
@@ -125,7 +125,7 @@ Durações usam o formato do `humantime` (`30s`, `5m`, `2h`, `1d`).
 
 ### Permissões
 
-A sessão roda sem ninguém para aprovar ferramentas: o que não estiver liberado por `allowed_tools`, `permission_mode` ou pelo `settings.json` do projeto em `cwd` é negado. Libere o mínimo que a análise precisa, por exemplo `Bash(ssh mono *)` para inspeção remota. `bypassPermissions` libera tudo.
+A sessão roda sem ninguém para aprovar ferramentas: o que não estiver liberado por `allowed_tools`, `permission_mode` ou pelo `settings.json` do projeto em `cwd` é negado. Libere o mínimo que a análise precisa, por exemplo `Bash(ssh meu-servidor *)` para inspeção remota. `bypassPermissions` libera tudo.
 
 ### Prompt enviado
 
